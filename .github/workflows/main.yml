@@ -1,14 +1,17 @@
-name: 'Check Branch'
-
+name: Check pull request source branch
 on:
-  pull_request:
-
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
 jobs:
-  check_branch:
+  check-branches:
     runs-on: ubuntu-latest
     steps:
-      - name: Check branch
-        if: github.base_ref == 'main' && github.head_ref != 'devolop'
+      - name: Check-branches
         run: |
-          echo "ERROR: You can only merge to main from devolop."
-          exit 1
+          if [ ${{ github.head_ref }} != "develop" ] && [ ${{ github.base_ref }} == "main" ]; then
+            echo "Merge requests to main branch are only allowed from develop branch."
+            exit 1
+          fi
